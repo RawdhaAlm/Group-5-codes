@@ -1,0 +1,263 @@
+class ShoppingCart:
+    """
+    ShoppingCart class represents a customer's active cart for ticket purchases.
+    
+    Attributes:
+        cart_id (int): Unique identifier for the cart.
+        customer (Customer): The customer associated with this cart.
+        items (list): A list of Ticket objects currently in the cart.
+        total_price (float): The total price of the tickets in the cart.
+        status (str): The current state of the cart (e.g., "active", "checked out").
+    
+    Relationships:
+        - Aggregation with Customer: A cart is linked to a specific customer but can exist independently.
+        - Composition with Ticket: Tickets cannot exist without being associated with a cart.
+    """
+    
+    def _init_(self, cart_id, customer):
+        """
+        Constructor to initialize ShoppingCart attributes.
+        """
+        if cart_id <= 0:
+            raise ValueError("Cart ID must be a positive integer.")
+        
+        self.cart_id = cart_id
+        self.customer = customer  # Aggregation relationship
+        self.items = []  # List of Ticket objects (Composition relationship)
+        self.total_price = 0.0
+        self.status = "active"
+    
+    # Getters and Setters
+    def get_cart_id(self):
+        """Get the cart ID."""
+        return self.cart_id
+    
+    def set_cart_id(self, cart_id):
+        """Set the cart ID."""
+        if cart_id <= 0:
+            raise ValueError("Cart ID must be a positive integer.")
+        self.cart_id = cart_id
+
+    def get_customer(self):
+        """Get the associated customer."""
+        return self.customer
+
+    def set_customer(self, customer):
+        """Set the associated customer."""
+        self.customer = customer
+
+    def get_items(self):
+        """Get the list of items in the cart."""
+        return self.items
+
+    def set_items(self, items):
+        """Set the list of items in the cart."""
+        if not isinstance(items, list):
+            raise TypeError("Items must be a list of Ticket objects.")
+        self.items = items
+
+    def get_total_price(self):
+        """Get the total price of the cart."""
+        return self.total_price
+
+    def set_total_price(self, total_price):
+        """Set the total price of the cart."""
+        if total_price < 0:
+            raise ValueError("Total price cannot be negative.")
+        self.total_price = total_price
+
+    def get_status(self):
+        """Get the current status of the cart."""
+        return self.status
+
+    def set_status(self, status):
+        """Set the current status of the cart."""
+        if status not in ["active", "checked out", "cancelled"]:
+            raise ValueError("Invalid status. Must be 'active', 'checked out', or 'cancelled'.")
+        self.status = status
+
+    # Additional Methods
+    def add_item(self, ticket):
+        """
+        Adds a ticket to the cart.
+        """
+        if ticket.price <= 0:
+            raise ValueError("Ticket price must be positive.")
+        self.items.append(ticket)
+        self.total_price += ticket.price
+        print(f"Added ticket: {ticket.type}. Total price updated to {self.total_price}.")
+
+    def remove_item(self, ticket):
+        """
+        Removes a ticket from the cart.
+        """
+        if ticket in self.items:
+            self.items.remove(ticket)
+            self.total_price -= ticket.price
+            print(f"Removed ticket: {ticket.type}. Total price updated to {self.total_price}.")
+        else:
+            raise ValueError("Ticket not found in the cart.")
+
+    def calculate_total(self):
+        """
+        Calculates and returns the total price of the cart.
+        """
+        self.total_price = sum(ticket.price for ticket in self.items)
+        return self.total_price
+
+    def clear_cart(self):
+        """
+        Clears all items from the cart and resets attributes.
+        """
+        self.items.clear()
+        self.total_price = 0.0
+        self.status = "active"
+        print("Cart cleared successfully.")
+
+    def checkout(self):
+        """
+        Changes the cart status to 'checked out' after processing.
+        """
+        if not self.items:
+            raise ValueError("Cart is empty. Add items before checkout.")
+        self.status = "checked out"
+        print(f"Cart checked out. Total price: {self.total_price}. Thank you for your purchase!")
+
+    # Exception Handling Example
+    def validate_cart(self):
+        """
+        Validates the cart to ensure it has at least one item before proceeding.
+        """
+        if not self.items:
+            raise ValueError("Cart is empty. Add at least one ticket.")
+        if self.total_price <= 0:
+            raise ValueError("Total price must be greater than zero.")
+
+# Example Usage
+if _name_ == "_main_":
+    # Mock classes for Customer and Ticket
+    class Customer:
+        def _init_(self, name):
+            self.name = name
+
+    class Ticket:
+        def _init_(self, type, price):
+            self.type = type
+            self.price = price
+
+    # Create a customer and a shopping cart
+    customer = Customer("Rawdha")
+    cart = ShoppingCart(1, customer)
+
+    # Add tickets to the cart
+    ticket1 = Ticket("Single Day Pass", 50.0)
+    ticket2 = Ticket("VIP Experience", 150.0)
+    cart.add_item(ticket1)
+    cart.add_item(ticket2)
+
+    # Remove a ticket
+    cart.remove_item(ticket1)
+
+    # Checkout
+    cart.checkout()
+
+    # Clear the cart
+    cart.clear_cart()
+
+
+
+test cases:
+
+# Mock classes for Customer and Ticket
+class Customer:
+    def _init_(self, name):
+        self.name = name
+
+class Ticket:
+    def _init_(self, type, price):
+        self.type = type
+        self.price = price
+
+# Test adding and removing tickets
+customer = Customer("Aysha")
+cart = ShoppingCart(101, customer)
+
+# Adding tickets
+ticket1 = Ticket("Single Day Pass", 50.0)
+ticket2 = Ticket("Group Discount Pass", 120.0)
+
+cart.add_item(ticket1)  # Adding Single Day Pass
+cart.add_item(ticket2)  # Adding Group Discount Pass
+
+print(f"Cart total after adding tickets: {cart.calculate_total()}")  # Should print 170.0
+
+# Removing a ticket
+cart.remove_item(ticket1)  # Removing Single Day Pass
+
+print(f"Cart total after removing a ticket: {cart.calculate_total()}")  # Should print 120.0
+
+
+
+# Mock class for Customer
+class Customer:
+    def _init_(self, name):
+        self.name = name
+
+# Mock class for Ticket
+class Ticket:
+    def _init_(self, type, price):
+        self.type = type
+        self.price = price
+
+# ShoppingCart Class
+class ShoppingCart:
+    """
+    Represents a shopping cart for the ticket booking system.
+    Attributes:
+        cart_id (int): Unique ID for the shopping cart.
+        customer (Customer): The customer associated with the cart.
+        items (list): List of Ticket objects in the cart.
+        total_price (float): Total price of the tickets in the cart.
+    """
+    def _init_(self, cart_id, customer):
+        self.cart_id = cart_id
+        self.customer = customer
+        self.items = []  # Initialize as empty list
+        self.total_price = 0.0
+
+    def add_item(self, ticket):
+        """Adds a ticket to the shopping cart."""
+        if not isinstance(ticket, Ticket):
+            raise TypeError("Only Ticket objects can be added to the cart.")
+        self.items.append(ticket)
+        self.total_price += ticket.price
+
+    def remove_item(self, ticket):
+        """Removes a ticket from the shopping cart."""
+        if ticket not in self.items:
+            raise ValueError("Ticket not found in the cart.")
+        self.items.remove(ticket)
+        self.total_price -= ticket.price
+
+    def calculate_total(self):
+        """Calculates and returns the total price of the items in the cart."""
+        return self.total_price
+
+    def checkout(self):
+        """Processes the checkout for the shopping cart."""
+        if not self.items:
+            raise ValueError("Cart is empty. Add items before checkout.")
+        # Simulate successful checkout
+        return f"Checkout successful for customer: {self.customer.name}"
+
+# Test Case: Checkout with Empty Cart
+try:
+    # Create a customer and an empty shopping cart
+    customer = Customer("Haya")
+    cart = ShoppingCart(102, customer)
+
+    # Attempt to checkout without adding any tickets
+    print("Attempting checkout...")
+    cart.checkout()  # This should raise a ValueError
+except ValueError as e:
+    print(f"Error: {e}")  # Expected output: "Cart is empty. Add items before checkout."
