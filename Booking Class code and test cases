@@ -1,0 +1,203 @@
+class Booking:
+    """
+    Booking Class represents a confirmed transaction between a customer and the ticket booking system.
+
+    Attributes:
+        booking_id (int): A unique identifier for the booking.
+        customer (Customer): The customer who made the booking.
+        ticket (Ticket): The ticket associated with the booking.
+        visit_date (str): The date of the visit for the booking.
+        number_of_tickets (int): The total number of tickets in the booking.
+
+    Relationships:
+        - Aggregation with Customer: Each booking is associated with one customer.
+        - Composition with Ticket: Each booking contains a ticket as part of the booking process.
+    """
+
+    def __init__(self, booking_id, customer, ticket, visit_date, number_of_tickets):
+        """
+        Initialize the Booking object with all required attributes.
+        """
+        if not isinstance(booking_id, int) or booking_id <= 0:
+            raise ValueError("Booking ID must be a positive integer.")
+        if not isinstance(customer, Customer):
+            raise TypeError("Customer must be an instance of the Customer class.")
+        if not isinstance(ticket, Ticket):
+            raise TypeError("Ticket must be an instance of the Ticket class.")
+        if not isinstance(number_of_tickets, int) or number_of_tickets <= 0:
+            raise ValueError("Number of tickets must be a positive integer.")
+        if not isinstance(visit_date, str) or len(visit_date.strip()) == 0:
+            raise ValueError("Visit date must be a valid non-empty string.")
+
+        self._booking_id = booking_id
+        self._customer = customer
+        self._ticket = ticket
+        self._visit_date = visit_date
+        self._number_of_tickets = number_of_tickets
+
+    # Getters
+    def get_booking_id(self):
+        return self._booking_id
+
+    def get_customer(self):
+        return self._customer
+
+    def get_ticket(self):
+        return self._ticket
+
+    def get_visit_date(self):
+        return self._visit_date
+
+    def get_number_of_tickets(self):
+        return self._number_of_tickets
+
+    # Setters
+    def set_booking_id(self, booking_id):
+        if not isinstance(booking_id, int) or booking_id <= 0:
+            raise ValueError("Booking ID must be a positive integer.")
+        self._booking_id = booking_id
+
+    def set_customer(self, customer):
+        if not isinstance(customer, Customer):
+            raise TypeError("Customer must be an instance of the Customer class.")
+        self._customer = customer
+
+    def set_ticket(self, ticket):
+        if not isinstance(ticket, Ticket):
+            raise TypeError("Ticket must be an instance of the Ticket class.")
+        self._ticket = ticket
+
+    def set_visit_date(self, visit_date):
+        if not isinstance(visit_date, str) or len(visit_date.strip()) == 0:
+            raise ValueError("Visit date must be a valid non-empty string.")
+        self._visit_date = visit_date
+
+    def set_number_of_tickets(self, number_of_tickets):
+        if not isinstance(number_of_tickets, int) or number_of_tickets <= 0:
+            raise ValueError("Number of tickets must be a positive integer.")
+        self._number_of_tickets = number_of_tickets
+
+    # Methods
+    def create_booking(self):
+        """
+        Create a new booking and return a success message.
+        """
+        return f"Booking ID {self._booking_id} created for {self._customer.get_name()} on {self._visit_date}."
+
+    def update_booking(self, ticket=None, visit_date=None, number_of_tickets=None):
+        """
+        Update the booking details.
+        """
+        if ticket:
+            self.set_ticket(ticket)
+        if visit_date:
+            self.set_visit_date(visit_date)
+        if number_of_tickets:
+            self.set_number_of_tickets(number_of_tickets)
+        return f"Booking ID {self._booking_id} updated successfully."
+
+    def cancel_booking(self):
+        """
+        Cancel the booking by resetting its attributes.
+        """
+        self._booking_id = None
+        self._customer = None
+        self._ticket = None
+        self._visit_date = None
+        self._number_of_tickets = 0
+        return "Booking has been canceled."
+
+    def display_booking_details(self):
+        """
+        Display the details of the booking.
+        """
+        return (
+            f"Booking ID: {self._booking_id}\n"
+            f"Customer: {self._customer.get_name()} (Email: {self._customer.get_email()})\n"
+            f"Ticket Type: {self._ticket.get_type()} (Price: {self._ticket.get_price()})\n"
+            f"Visit Date: {self._visit_date}\n"
+            f"Number of Tickets: {self._number_of_tickets}"
+        )
+
+    def calculate_total_price(self):
+        """
+        Calculate the total price for the booking based on the number of tickets.
+        """
+        return self._ticket.get_price() * self._number_of_tickets
+
+
+# Example Mock Classes for Testing
+class Customer:
+    def __init__(self, name, email, phone_number):
+        self._name = name
+        self._email = email
+        self._phone_number = phone_number
+
+    def get_name(self):
+        return self._name
+
+    def get_email(self):
+        return self._email
+
+
+class Ticket:
+    def __init__(self, ticket_id, ticket_type, price):
+        self._ticket_id = ticket_id
+        self._type = ticket_type
+        self._price = price
+
+    def get_type(self):
+        return self._type
+
+    def get_price(self):
+        return self._price
+
+
+# Example usage
+if __name__ == "__main__":
+    # Create mock Customer and Ticket objects
+    mock_customer = Customer("Rawdha", "rawdha@example.com", "0554788002")
+    mock_ticket = Ticket(101, "Single-Day", 100.0)
+
+    # Create a Booking
+    booking = Booking(1, mock_customer, mock_ticket, "2024-12-05", 2)
+    print(booking.display_booking_details())
+
+    # Update the booking
+    booking.update_booking(visit_date="2024-12-06", number_of_tickets=3)
+    print(booking.display_booking_details())
+
+    # Calculate total price
+    print(f"Total Price: {booking.calculate_total_price()}")
+
+    # Cancel the booking
+    print(booking.cancel_booking())
+
+
+
+test cases:
+
+# Test Case 1: Valid Booking Creation and Total Price Calculation
+mock_customer = Customer("Aysha", "aysha@example.com", "0501234567")
+mock_ticket = Ticket(202, "Multi-Day", 150.0)
+
+# Create a valid booking
+valid_booking = Booking(2, mock_customer, mock_ticket, "2024-12-10", 3)
+
+# Display booking details
+print(valid_booking.display_booking_details())
+
+# Calculate and display total price
+print(f"Total Price for Booking: {valid_booking.calculate_total_price()}")
+
+
+
+# Test Case 2: Invalid Number of Tickets for Booking
+try:
+    mock_customer = Customer("Haya", "haya@example.com", "0567890123")
+    mock_ticket = Ticket(303, "VIP Experience", 250.0)
+
+    # Attempt to create a booking with an invalid number of tickets
+    invalid_booking = Booking(3, mock_customer, mock_ticket, "2024-12-15", -2)
+except ValueError as e:
+    print(f"Error: {e}")
