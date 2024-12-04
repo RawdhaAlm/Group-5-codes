@@ -1,0 +1,215 @@
+class Ticket:
+    """
+    Represents a ticket in the ticket booking system.
+
+    Attributes:
+        ticket_id (int): Unique identifier for the ticket.
+        type (str): Type of the ticket (e.g., SingleDay, MultiDay, AnnualMembership, etc.).
+        price (float): Base price of the ticket.
+        validity (int): Validity of the ticket in days or years.
+        discount (float): Discount percentage applied to the ticket (0.0 - 1.0).
+        limitations (str): Limitations or restrictions on the ticket.
+
+    Relationships:
+        - Associated with Booking (Composition): Each ticket belongs to one booking.
+        - Inherited by specialized ticket types (Inheritance): SingleDayTicket, MultiDayTicket, etc.
+    """
+
+    def __init__(self, ticket_id, type, price, validity, discount=0.0, limitations=""):
+        """
+        Initializes the Ticket instance.
+        """
+        if price <= 0 or validity <= 0:
+            raise ValueError("Price and validity must be greater than 0.")
+        if not type:
+            raise ValueError("Type cannot be empty.")
+        if not (0 <= discount <= 1):
+            raise ValueError("Discount must be between 0 and 1.")
+
+        self._ticket_id = ticket_id
+        self._type = type
+        self._price = price
+        self._validity = validity
+        self._discount = discount
+        self._limitations = limitations
+
+    # Getters and Setters
+    def get_ticket_id(self):
+        return self._ticket_id
+
+    def set_ticket_id(self, ticket_id):
+        self._ticket_id = ticket_id
+
+    def get_type(self):
+        return self._type
+
+    def set_type(self, type):
+        if not type:
+            raise ValueError("Type cannot be empty.")
+        self._type = type
+
+    def get_price(self):
+        return self._price
+
+    def set_price(self, price):
+        if price <= 0:
+            raise ValueError("Price must be greater than 0.")
+        self._price = price
+
+    def get_validity(self):
+        return self._validity
+
+    def set_validity(self, validity):
+        if validity <= 0:
+            raise ValueError("Validity must be greater than 0.")
+        self._validity = validity
+
+    def get_discount(self):
+        return self._discount
+
+    def set_discount(self, discount):
+        if not (0 <= discount <= 1):
+            raise ValueError("Discount must be between 0 and 1.")
+        self._discount = discount
+
+    def get_limitations(self):
+        return self._limitations
+
+    def set_limitations(self, limitations):
+        self._limitations = limitations
+
+    # Methods
+    def calculate_discounted_price(self):
+        """
+        Calculates the ticket price after applying the discount.
+        Returns:
+            float: Discounted price.
+        """
+        return self._price * (1 - self._discount)
+
+    def get_ticket_details(self):
+        """
+        Returns a formatted string with all ticket details.
+        """
+        return (f"Ticket ID: {self._ticket_id}, Type: {self._type}, Price: {self._price}, "
+                f"Discounted Price: {self.calculate_discounted_price()}, "
+                f"Validity: {self._validity} days/years, Limitations: {self._limitations}")
+
+
+# Child Classes
+class SingleDayTicket(Ticket):
+    """
+    Represents a single-day ticket.
+    """
+
+    def __init__(self, ticket_id):
+        super().__init__(ticket_id, "SingleDay", 275, 1, 0.0, "Valid only on selected date")
+
+
+class MultiDayTicket(Ticket):
+    """
+    Represents a two-day ticket.
+    """
+
+    def __init__(self, ticket_id):
+        super().__init__(ticket_id, "TwoDayPass", 480, 2, 0.1, "Cannot be split over multiple trips")
+
+
+class AnnualMembershipTicket(Ticket):
+    """
+    Represents an annual membership ticket.
+    """
+
+    def __init__(self, ticket_id):
+        super().__init__(ticket_id, "AnnualMembership", 1840, 365, 0.15, "Must be used by the same person")
+
+
+class ChildTicket(Ticket):
+    """
+    Represents a child ticket.
+    """
+
+    def __init__(self, ticket_id):
+        super().__init__(ticket_id, "ChildTicket", 185, 1, 0.0, "Valid only on selected date, must be accompanied by an adult")
+
+
+class GroupTicket(Ticket):
+    """
+    Represents a group ticket for 10 or more people.
+    """
+
+    def __init__(self, ticket_id, group_size):
+        if group_size < 10:
+            raise ValueError("Group size must be 10 or more.")
+        super().__init__(ticket_id, "GroupTicket", 220, 1, 0.2 if group_size >= 20 else 0.0, "Must be booked in advance")
+
+
+class VIPExperienceTicket(Ticket):
+    """
+    Represents a VIP experience ticket.
+    """
+
+    def __init__(self, ticket_id):
+        super().__init__(ticket_id, "VIPExperience", 550, 1, 0.0, "Limited availability, must be purchased in advance")
+
+
+# Example Usage
+if __name__ == "__main__":
+    try:
+        # Create a SingleDayTicket
+        single_ticket = SingleDayTicket(ticket_id=101)
+        print(single_ticket.get_ticket_details())
+
+        # Create a MultiDayTicket
+        multi_ticket = MultiDayTicket(ticket_id=202)
+        print(multi_ticket.get_ticket_details())
+
+        # Create an AnnualMembershipTicket
+        annual_ticket = AnnualMembershipTicket(ticket_id=303)
+        print(annual_ticket.get_ticket_details())
+
+        # Create a ChildTicket
+        child_ticket = ChildTicket(ticket_id=404)
+        print(child_ticket.get_ticket_details())
+
+        # Create a GroupTicket with 15 people
+        group_ticket = GroupTicket(ticket_id=505, group_size=15)
+        print(group_ticket.get_ticket_details())
+
+        # Create a VIPExperienceTicket
+        vip_ticket = VIPExperienceTicket(ticket_id=606)
+        print(vip_ticket.get_ticket_details())
+
+    except ValueError as e:
+        print(f"Error: {e}")
+
+
+test cases:
+
+if __name__ == "__main__":
+    try:
+        # Test GroupTicket for a group of 10 people (no discount)
+        group_ticket_10 = GroupTicket(ticket_id=701, group_size=10)
+        print("Group of 10:")
+        print(group_ticket_10.get_ticket_details())
+
+        # Test GroupTicket for a group of 25 people (20% discount)
+        group_ticket_25 = GroupTicket(ticket_id=702, group_size=25)
+        print("\nGroup of 25:")
+        print(group_ticket_25.get_ticket_details())
+
+    except ValueError as e:
+        print(f"Error: {e}")
+
+
+if __name__ == "__main__":
+    try:
+        # Test SingleDayTicket with invalid negative price
+        print("Testing invalid ticket price:")
+        invalid_ticket = SingleDayTicket(ticket_id=801)
+        invalid_ticket.set_price(-50)  # Setting an invalid price
+        print(invalid_ticket.get_ticket_details())  # This line should not be executed
+
+    except ValueError as e:
+        print(f"Error: {e}")
+
