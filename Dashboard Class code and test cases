@@ -1,0 +1,182 @@
+class Dashboard:
+    def __init__(self):
+        self.__total_sales = 0.0
+        self.__tickets_sold = 0
+        self.__daily_sales_data = {}  # Format: {'YYYY-MM-DD': total_sales}
+        self.__top_tickets = []  # List of Ticket objects
+        self.__admin_access_log = []  # Logs of admin actions
+
+    # Getters and Setters
+    def get_total_sales(self):
+        return self.__total_sales
+
+    def set_total_sales(self, total_sales):
+        if total_sales < 0:
+            raise ValueError("Total sales cannot be negative.")
+        self.__total_sales = total_sales
+
+    def get_tickets_sold(self):
+        return self.__tickets_sold
+
+    def set_tickets_sold(self, tickets_sold):
+        if tickets_sold < 0:
+            raise ValueError("Tickets sold cannot be negative.")
+        self.__tickets_sold = tickets_sold
+
+    def get_daily_sales_data(self):
+        return self.__daily_sales_data
+
+    def set_daily_sales_data(self, daily_sales_data):
+        if not isinstance(daily_sales_data, dict):
+            raise TypeError("Daily sales data must be a dictionary.")
+        self.__daily_sales_data = daily_sales_data
+
+    def get_top_tickets(self):
+        return self.__top_tickets
+
+    def set_top_tickets(self, top_tickets):
+        if not isinstance(top_tickets, list):
+            raise TypeError("Top tickets must be a list of Ticket objects.")
+        self.__top_tickets = top_tickets
+
+    def get_admin_access_log(self):
+        return self.__admin_access_log
+
+    def set_admin_access_log(self, admin_access_log):
+        if not isinstance(admin_access_log, list):
+            raise TypeError("Admin access log must be a list of strings.")
+        self.__admin_access_log = admin_access_log
+
+    # Additional Functionalities
+    def generate_sales_report(self):
+        report = (
+            f"Total Sales: {self.__total_sales}\n"
+            f"Tickets Sold: {self.__tickets_sold}\n"
+            f"Daily Sales Data: {self.__daily_sales_data}\n"
+            f"Top Tickets: {[ticket.get_ticket_details() for ticket in self.__top_tickets]}\n"
+            f"Admin Actions Log: {self.__admin_access_log}\n"
+        )
+        return report
+
+    def get_most_popular_ticket(self):
+        if not self.__top_tickets:
+            return "No ticket data available."
+        return max(self.__top_tickets, key=lambda ticket: ticket.get_sales_count())
+
+    def log_admin_action(self, action):
+        if not action:
+            raise ValueError("Action cannot be empty.")
+        self.__admin_access_log.append(action)
+
+    def reset_dashboard(self):
+        self.__total_sales = 0.0
+        self.__tickets_sold = 0
+        self.__daily_sales_data = {}
+        self.__top_tickets = []
+        self.__admin_access_log = []
+
+# Example Usage
+if __name__ == "__main__":
+    try:
+        # Create a dashboard instance
+        dashboard = Dashboard()
+
+        # Simulate sales data
+        dashboard.set_total_sales(5000.0)
+        dashboard.set_tickets_sold(250)
+        dashboard.set_daily_sales_data({"2024-12-01": 2000, "2024-12-02": 3000})
+
+        # Simulate top tickets
+        class Ticket:
+            def __init__(self, ticket_id, ticket_type, sales_count):
+                self.ticket_id = ticket_id
+                self.ticket_type = ticket_type
+                self.sales_count = sales_count
+
+            def get_sales_count(self):
+                return self.sales_count
+
+            def get_ticket_details(self):
+                return f"Ticket ID: {self.ticket_id}, Type: {self.ticket_type}, Sales: {self.sales_count}"
+
+        top_ticket1 = Ticket(1, "VIP Pass", 120)
+        top_ticket2 = Ticket(2, "Single Day", 130)
+
+        dashboard.set_top_tickets([top_ticket1, top_ticket2])
+
+        # Log admin actions
+        dashboard.log_admin_action("Admin updated discounts.")
+        dashboard.log_admin_action("Admin generated sales report.")
+
+        # Generate and display the sales report
+        print(dashboard.generate_sales_report())
+
+        # Get most popular ticket
+        print("Most Popular Ticket:")
+        print(dashboard.get_most_popular_ticket().get_ticket_details())
+
+    except Exception as e:
+        print(f"Error: {e}")
+
+
+
+test cases:
+
+if __name__ == "__main__":
+    try:
+        # Initialize the dashboard
+        dashboard = Dashboard()
+
+        # Log a series of admin actions
+        dashboard.log_admin_action("Admin logged in.")
+        dashboard.log_admin_action("Admin reset the dashboard metrics.")
+        dashboard.log_admin_action("Admin generated a weekly sales report.")
+
+        # Retrieve and display the admin action log
+        print("Admin Action Log:")
+        for action in dashboard.get_admin_access_log():
+            print(action)
+
+    except Exception as e:
+        print(f"Error: {e}")
+
+
+
+if __name__ == "__main__":
+    try:
+        # Initialize the dashboard
+        dashboard = Dashboard()
+
+        # Set sales data
+        dashboard.set_total_sales(7500.0)
+        dashboard.set_tickets_sold(300)
+        dashboard.set_daily_sales_data({"2024-12-01": 4000, "2024-12-02": 3500})
+
+        # Create and set top-selling tickets
+        class Ticket:
+            def __init__(self, ticket_id, ticket_type, sales_count):
+                self.ticket_id = ticket_id
+                self.ticket_type = ticket_type
+                self.sales_count = sales_count
+
+            def get_sales_count(self):
+                return self.sales_count
+
+            def get_ticket_details(self):
+                return f"Ticket ID: {self.ticket_id}, Type: {self.ticket_type}, Sales: {self.sales_count}"
+
+        top_ticket1 = Ticket(1, "Two-Day Pass", 150)
+        top_ticket2 = Ticket(2, "Annual Membership", 180)
+
+        dashboard.set_top_tickets([top_ticket1, top_ticket2])
+
+        # Generate and display the sales report
+        print("Generated Sales Report:")
+        print(dashboard.generate_sales_report())
+
+        # Identify and display the most popular ticket
+        print("Most Popular Ticket:")
+        print(dashboard.get_most_popular_ticket().get_ticket_details())
+
+    except Exception as e:
+        print(f"Error: {e}")
